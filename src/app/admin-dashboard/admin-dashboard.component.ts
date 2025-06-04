@@ -1,46 +1,54 @@
-import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Component } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-admin-dashboard',
-  templateUrl: './admin-dashboard.component.html',
-  styleUrls: ['./admin-dashboard.component.css'],
   standalone: true,
-  imports: [CommonModule]
+  imports: [FormsModule, CommonModule],
+  templateUrl: './admin-dashboard.component.html',
+  styleUrls: ['./admin-dashboard.component.css']
 })
-export class AdminDashboardComponent implements OnInit {
-  teachers: any[] = [];
+export class AdminDashboardComponent {
+  teacher = {
+    name: '',
+    email: '',
+    password: ''
+  };
+
+  successMessage = '';
+  errorMessage = '';
 
   constructor(private http: HttpClient) {}
 
-  ngOnInit() {
-    this.loadTeachers();
-  }
-
-  loadTeachers() {
-    this.http.get('http://localhost:7095/api/teachers')
-      .subscribe((data: any) => {
-        this.teachers = data;
-      });
-  }
-
-  // ✅ Fix: Add `addTeacher()` method here
   addTeacher() {
-    const teacherData = {
-      name: 'John Doe',
-      email: 'johndoe@example.com',
-      password: 'defaultpassword'
-    };
-
-    this.http.post('http://localhost:7095/api/Auth/add-teacher', teacherData)
+    this.successMessage = '';
+    this.errorMessage = '';
+  
+    const token = localStorage.getItem('token');
+    if (!token) {
+      this.errorMessage = 'Authentication token missing!';
+      return;
+    }
+  
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+  
+    this.http.post('http://localhost:7095/api/Auth/add-teacher', this.teacher, { headers })
       .subscribe({
-        next: res => {
-          alert('Teacher added successfully!');
-          this.loadTeachers(); // Reload teacher list after adding
+        next: (res: any) => {
+          // ✅ Backend returns plain string: "Teacher created successfully."
+          this.successMessage = res.message || 'Teacher added successfully!';
+          this.teacher = { name: '', email: '', password: '' };
         },
-        error: err => {
-          alert(err.error.message || 'Failed to add teacher.');
+        error: (err) => {
+          console.error('Error:', err);
+          this.errorMessage = typeof err.error === 'string'
+            ? err.error
+            : err.error?.message || 'Failed to add teacher.';
         }
       });
   }

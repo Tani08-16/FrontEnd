@@ -16,6 +16,6 @@ export const appRoutes: Routes = [
   { path: 'help', component: HelpCmpComponent },
   { path: 'student-dashboard', component: StudentDashboardComponent },
   { path: 'teacher-dashboard', component: TeacherDashboardComponent },
-  { path: 'admin-dashboard', component: AdminDashboardComponent },
+  { path: 'admin-dashboard', loadComponent: () => import('./admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent) },
   { path: '', redirectTo: '/login', pathMatch: 'full' }
 ];
