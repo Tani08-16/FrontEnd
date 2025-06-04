@@ -1,14 +1,15 @@
 <nav>
-  <!-- Show before login -->
+  <!-- Before login -->
   <a *ngIf="!isLoggedIn()" routerLink="/home">Home</a>
   <a *ngIf="!isLoggedIn()" routerLink="/login">Login</a>
   <a *ngIf="!isLoggedIn()" routerLink="/signup">SignUp</a>
   <a *ngIf="!isLoggedIn()" routerLink="/about">About</a>
   <a *ngIf="!isLoggedIn()" routerLink="/help">Help</a>
 
-  <!-- Show after login -->
-  <a *ngIf="isLoggedIn()" routerLink="/dashboard">Dashboard</a>
+  <!-- After login -->
+  <a *ngIf="isLoggedIn()" [routerLink]="getDashboardLink()">Dashboard</a>
   <a *ngIf="isLoggedIn()" routerLink="/help">Help</a>
   <a *ngIf="isLoggedIn()" (click)="onLogout()">Logout</a>
 </nav>
-<router-outlet></router-outlet>
+
+<router-outlet></router-outlet> 

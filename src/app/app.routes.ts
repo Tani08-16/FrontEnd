@@ -10,7 +10,7 @@ import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.compo
 
 export const appRoutes: Routes = [
   { path: 'home', component: HomeComponent },
-  { path: 'login', component: LoginComponent },
+  { path: 'login', loadComponent: () => import('./login/login.component').then(m => m.LoginComponent) },
   { path: 'signup', component: SignupComponent },
   { path: 'about', component: AboutComponent },
   { path: 'help', component: HelpCmpComponent },

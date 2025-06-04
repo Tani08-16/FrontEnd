@@ -7,7 +7,7 @@ import { jwtDecode } from 'jwt-decode';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [RouterModule, FormsModule],  // ✅ Ensure RouterModule and FormsModule are included
+  imports: [RouterModule, FormsModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
@@ -27,15 +27,13 @@ export class LoginComponent {
           }
 
           localStorage.setItem('token', token);
-          console.log('JWT Token Stored:', token);
 
           try {
             const decodedToken: any = jwtDecode(token);
-            console.log('Decoded Token:', decodedToken);
-
             const userRole = decodedToken?.role || decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+
             if (!userRole) {
-              alert("Login failed: Role missing!");
+              alert("Login failed: No role found in token!");
               return;
             }
 
@@ -47,15 +45,20 @@ export class LoginComponent {
               'Student': '/student-dashboard'
             };
 
-            this.router.navigate([dashboardRoutes[userRole]]);
-          } catch (error) {
-            console.error("Error decoding JWT:", error);
+            const redirectTo = dashboardRoutes[userRole];
+            if (redirectTo) {
+              this.router.navigate([redirectTo]);
+            } else {
+              alert("Unknown role. Cannot navigate.");
+            }
+          } catch (err) {
+            console.error("Invalid token:", err);
             alert("Login failed: Invalid token!");
           }
         },
         error: err => {
           console.error('Login failed:', err);
-          alert(err.error.message || 'Login failed!');
+          alert(err.error?.message || 'Login failed!');
         }
       });
   }
