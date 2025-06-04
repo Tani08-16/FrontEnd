@@ -1,0 +1,10 @@
+<h1>Admin Dashboard</h1>
+<button (click)="addTeacher()">Add Teacher</button>
+
+<!-- Teacher List -->
+<div *ngIf="teachers.length > 0">
+  <h2>All Teachers</h2>
+  <ul>
+    <li *ngFor="let teacher of teachers">{{ teacher.name }} - {{ teacher.email }}</li>
+  </ul>
+</div>
